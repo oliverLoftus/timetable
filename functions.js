@@ -1,11 +1,12 @@
-const getUniqueID = createCounter();
-function createCounter() {
+//immediatly invoked closures
+const getUniqueID = (function() {
     let count = 0;
-    return function () { return ++count; }
-}
+    return function() { 
+        return ++count; 
+    };
+})();
 
-const dragManager = createDragManager();
-function createDragManager() {
+const dragManager = (function() {
     let dragObject;
     return {
         getDragObject: function() {
@@ -15,10 +16,9 @@ function createDragManager() {
             dragObject = slot;
         }
     };
-}
+})();
 
-const clickManager = createClickManager();
-function createClickManager() {
+const clickManager = (function() {
     let clickObject;
     return {
         getClickObject: function() {
@@ -28,8 +28,9 @@ function createClickManager() {
             clickObject = slot;
         }
     };
-}
+})();
 
+//other functions
 function getNewElement() {
     const newDiv = document.createElement('div');
     const labelText = document.createElement('span');
