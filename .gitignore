@@ -1,0 +1,6 @@
+# Ignore all files in the Saves folder
+Saves/
+Old/
+
+# Ignore all .json files
+*.json
