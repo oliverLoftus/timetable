@@ -1,3 +1,10 @@
+function getSaveObject() {
+    return {
+        userSlots: saveData(),
+        customSlots: getTimetableValues()
+    };
+}
+
 function saveData() {
     const saveArray = userSlotArray.map(slot => {
         const [label, room, colour] = Object.values(slot);
@@ -13,6 +20,15 @@ function saveData() {
     return saveArray;  // Return the populated array
 }
 
+function getTimetableValues() {
+    const newArray = [];
+    timetableArray.forEach(slot => {
+        const privateValues = slot.getPrivateValues();
+        newArray.push(privateValues);
+    });
+    return newArray;
+}
+
 function getChildArray(parentObject) {
     const tempArray = [];
     timetableArray.forEach((element, index) => {
@@ -23,31 +39,8 @@ function getChildArray(parentObject) {
     return tempArray;
 }
 
-function save() {
-    const data = saveData();  // Assuming this function returns your array or object
-    const filename = 'data.json';  // Set a default filename, you can also let the user choose it
-
-    // Convert data to JSON string
-    const dataStr = JSON.stringify(data, null, 4);
-
-    // Create a Blob with the data
-    const blob = new Blob([dataStr], {type: 'application/json'});
-
-    // Create an anchor element and use it for triggering download
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-
-    // Cleanup
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-}
-
 function saveAs() {
-    const data = JSON.stringify(saveData()); // Assume savedUserData is your JSON object
+    const data = JSON.stringify(getSaveObject()); // Assume savedUserData is your JSON object
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
@@ -73,6 +66,14 @@ function setChildren(indices, parentSlot) {
     });
 }
 
+function loadCustomSlots(customSlots) {
+    customSlots.forEach((slotValues, index) => {
+        if (timetableArray[index]) {
+            timetableArray[index].setPrivateValues(slotValues);
+        }
+    });
+}
+
 function loadFile() {
     const fileInput = document.getElementById('fileInput');
 
@@ -81,7 +82,8 @@ function loadFile() {
         reader.onload = function(event) {
             clearUserSlots();
             const savedUserData = JSON.parse(event.target.result);
-            loadUserSlots(savedUserData);
+            loadUserSlots(savedUserData.userSlots);
+            loadCustomSlots(savedUserData.customSlots);
             console.log('File loaded and parsed:', savedUserData);
         };
 

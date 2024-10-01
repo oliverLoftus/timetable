@@ -8,6 +8,8 @@ class Slot {
         this.id = getUniqueID();
         this.element = getNewElement();
         this.element.id = 'slot-' + this.id;
+        this.labelElement = this.element.querySelector('.labelText');
+        this.roomElement = this.element.querySelector('.roomText');
         this.element.addEventListener('contextmenu', (event) => this.handleRightClick(event));
         this.updateUI();
     }
@@ -49,12 +51,23 @@ class Slot {
         this.updateUI();
     }
 
+    getPrivateValues() {
+        return [this._label, this._room, this._colour];
+    }
+
+    setPrivateValues([label, room, colour]) {
+        this._label = label;
+        this._room = room;
+        this._colour = colour;
+        this.updateUI();
+    }
+
     updateUI() {
         this.element.style.backgroundColor = this.colour;
-        this.element.querySelector('.labelText').textContent = this.label;
-        this.element.querySelector('.roomText').textContent = this.room;
-        this.element.querySelector('.labelText').style.color = getContrast(this.colour);
-        this.element.querySelector('.roomText').style.color = getContrast(this.colour);
+        this.labelElement.textContent = this.label;
+        this.roomElement.textContent = this.room;
+        this.labelElement.style.color = getContrast(this.colour);
+        this.roomElement.style.color = getContrast(this.colour);
     }
 
     clearCustoms() {
